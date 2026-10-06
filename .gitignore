@@ -1,0 +1,24 @@
+clip-studio/.venv/
+clip-studio/frontend/node_modules/
+clip-studio/frontend/dist/
+clip-studio/data/
+clip-studio/.env
+clip-studio/.env.*
+!clip-studio/.env.example
+clip-studio/server-access.txt
+# Private operating notes, verification artifacts, and media stay local.
+clip-studio/docs/
+clip-studio/README.md
+clip-studio/compose.live.yaml
+clip-studio/docs/nginx.live.conf
+clip-studio/docs/nginx.duckdns.conf
+**/*.mp4
+**/*.mov
+**/*.mkv
+**/*.webm
+**/*.avi
+**/*.m4v
+**/__pycache__/
+**/.pytest_cache/
+.DS_Store
+**/*.tsbuildinfo

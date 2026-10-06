@@ -1,0 +1,65 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    environment:
+      CLIP_DATA_DIR: /data
+      CLIP_REQUIRE_AUTH: "1"
+      CLIP_USERNAME: ${CLIP_USERNAME:-creator}
+      CLIP_PASSWORD: ${CLIP_PASSWORD:?Set a password of at least 16 characters in .env}
+      CLIP_MAX_UPLOAD_MB: ${CLIP_MAX_UPLOAD_MB:-512}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      CLIP_GROQ_MODEL: ${CLIP_GROQ_MODEL:-openai/gpt-oss-20b}
+      CLIP_DATA_BUDGET_MB: ${CLIP_DATA_BUDGET_MB:-2048}
+      CLIP_MIN_FREE_MB: ${CLIP_MIN_FREE_MB:-512}
+      CLIP_RETENTION_DAYS: ${CLIP_RETENTION_DAYS:-7}
+      CLIP_AI_DAILY_LIMIT: ${CLIP_AI_DAILY_LIMIT:-10}
+      CLIP_OPENAI_MODEL: ${CLIP_OPENAI_MODEL:-gpt-4.1-mini}
+      CLIP_GEMINI_MODEL: ${CLIP_GEMINI_MODEL:-gemini-3.8-flash}
+    volumes:
+      - studio-data:/data
+    expose:
+      - "8000"
+    mem_limit: 384m
+    cpus: 0.5
+  worker:
+    build: .
+    restart: unless-stopped
+    command: ["python", "-m", "backend.worker"]
+    environment:
+      CLIP_DATA_DIR: /data
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      CLIP_GROQ_MODEL: ${CLIP_GROQ_MODEL:-openai/gpt-oss-20b}
+      CLIP_DATA_BUDGET_MB: ${CLIP_DATA_BUDGET_MB:-2048}
+      CLIP_MIN_FREE_MB: ${CLIP_MIN_FREE_MB:-512}
+      CLIP_RETENTION_DAYS: ${CLIP_RETENTION_DAYS:-7}
+      CLIP_AI_DAILY_LIMIT: ${CLIP_AI_DAILY_LIMIT:-10}
+      CLIP_OPENAI_MODEL: ${CLIP_OPENAI_MODEL:-gpt-4.1-mini}
+      CLIP_GEMINI_MODEL: ${CLIP_GEMINI_MODEL:-gemini-3.8-flash}
+      CLIP_MAX_UPLOAD_MB: ${CLIP_MAX_UPLOAD_MB:-512}
+    volumes:
+      - studio-data:/data
+    mem_limit: 3g
+    cpus: 2
+    stop_grace_period: 30s
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      CLIP_DOMAIN: ${CLIP_DOMAIN:?Set your domain in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+volumes:
+  studio-data:
+  caddy-data:
+  caddy-config:

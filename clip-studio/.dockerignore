@@ -1,0 +1,6 @@
+.venv
+data
+frontend/node_modules
+.env*
+tests
+**/__pycache__

@@ -1,0 +1,10 @@
+# Apply to compose.ssh.yaml on a server that already runs other applications.
+# docker compose -f compose.ssh.yaml -f compose.shared-server.yaml up -d --build
+services:
+  web:
+    mem_limit: 320m
+    cpus: 0.3
+  worker:
+    mem_limit: 1g
+    cpus: 0.7
+    cpu_shares: 256
